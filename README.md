@@ -1,44 +1,58 @@
 # typescript
 
-## TypeScript Fundamentals v3
+## [TypeScript Fundamentals v3](https://github.com/mike-north/ts-fundamentals-v3)
 
-[Repo](https://github.com/mike-north/ts-fundamentals-v3)
+### Setup
 
-[Bare bones TS compiler](https://www.typescript-training.com/course/fundamentals-v3/02-hello-typescript/)
-
-```json
-"compilerOptions": {
-  "target": "ES2017"
-  // cleaner generated dist than ES2015
-  // creates .d.ts - declaration file
-}
-```
-
+- [Setting up a TS compiler](https://www.typescript-training.com/course/fundamentals-v3/02-hello-typescript/)
 - .ts files contain info and runs
 - .js run only
 - .d.ts only contain info
 - `export` is CommonJS modules
 
+<br/>
+
+### Variables and Values
+
+- in TS, variables are born with their types
+  - `const age = 6`, type is 'immutable value type'
+  - `let age = 6; age = "not a number"` Type 'string' is not assignable to type 'number'
+  - type inference is not so specific that `age` cannot be assigned to another number
+- literal types: 6, 'hello'
+
+<br/>
+
+### Objects, Arrays and Tuples
+
+- object literal type may only specific known props, unstated types will cause an error
+  - `const obj: { name: string } = { name: 'joe', age: 1};` -> error
+- `const obj: { [k: string]: string } = { name: 'joe'};` -> keys and values = string
+
+- Tuple: multi-element, ordered data structure, position of each item has special meaning
+
 ```ts
-6, 'hello' = literal type
-const age = 6; // immutable value type
+let myCar = [2002, "Toyota", "Corolla"];
+const [year, make, model] = myCar;
+// TS chooses the most specific type that describes the entire contents of the array
+// model type is string | number
+// why not that model is always string? too restrictive...
+// Thus, we need to explicitly state the type of a tuple
+let myCar: [number, string, string] = [2002, "Toyota", "Corolla"];
+
+// but as of TS 4.3 tuple support is limited
+const numPair: [number, number] = [4, 5];
+numPair.push(6); // OK
 ```
 
-- object literal type may only specific known props, unstate types will cause an error
+<br/>
 
-```ts
+### Structural vs. Nominal Types
 
-```
-
--Type-checking can be thought of as a task that attempts to evaluate the question of compatibility or type equivalence:
-
-- static type checking = done at compile time (TS, java)
-- dynamic = done at runtime (js, python, perl)
-
-- Nominal type system, about names
+- Type-checking can be thought of as a task that attempts to evaluate the question of compatibility or type equivalence
+- Nominal type systems are about names
 
 ```java
-
+// java
 public class CarChecker {
   // takes a `Car` argument, returns a `String`
   public static String printCar(Car car) {  }
@@ -47,59 +61,57 @@ Car car = new Car();
 CarChecker.checkCar(car); // checks if car is instance of class named Car car
 ```
 
-- Structural type system, about structure / names
+- Structural type systems (which TS is) are about structure or shape
 
 ```ts
 class Car {
   make: string;
-  isElectric: boolean;
+  model: string;
 }
-
-class Truck {
-  make: string;
-  towingCapacity: number;
-}
-
-const vehicle = {
-  make: "Honda",
-  model: "Accord",
-  year: 2017,
-};
-
-function printCar(car: { make: string }) {
-  console.log(`${car.make} ${car.model} (${car.year})`);
+// Only cares that argument has suitable props
+function printCar(car: { make: string; model: string }) {
+  console.log(`${car.make} ${car.model} `);
 }
 
 printCar(new Car()); // Fine
-printCar(new Truck()); // Fine
-printCar(vehicle); // Fine
-// Only cares that has make prop
+printCar({
+  make: "Honda",
+  model: "Accord",
+  year: 2017,
+}); // Fine
 ```
 
-- type guards: expressions, which when used with control flow statement, allow us to have a more specific type for a particular value.
+<br/>
+
+### Union and Intersection Types
+
+- type guards: expressions, which when used with control flow statement, allow us to have a more specific type for a particular value
 
 ```ts
 const e: Error | string = '';
 if( e instance of Error){ // <- type guard
   // can do Error specific code here, aka narrowing
 }else{
-  // Discriminated Unions, can do string things here (aka)
+  // Discriminated Unions, can do string things here as if it's not error it's a string
 }
 ```
 
-- 2 ways to define type, type alias & interfaces
+<br/>
+
+### Interfaces and Type Aliases
+
+- 2 ways to define types, type alias & interfaces
 - type alias declaration is per scope
 
 ```ts
-// combine existing types
+// Intersection types:  combine existing types
 type SpecialDate = Date & { getReason(): string };
 ```
 
 interface: defines an object type, i.e. an instance of a class could look like this
 
 ```ts
-// 2 heritage clauses
-// extends: a subclass extends from a base class
+// heritage clauses = extends, a subclass extends from a base class
 interface Animal {
   isAlive(): boolean;
 }
@@ -118,7 +130,8 @@ class Dog implements AnimalLike {
 }
 ```
 
-- no multiple inheritance, but can implement multiple
+- no multiple inheritance, but can implement multiple interfaces
+- Best to use implement with interface NOT type alias, if the type ever breaks the “object type” rules there’s [some potential for problems…](https://www.typescript-training.com/course/fundamentals-v3/07-interfaces-and-type-aliases/)
 
 ```ts
 // what it means for interfaces to be open
@@ -129,11 +142,6 @@ interface AnimalLike {
   eat(food): void;
 }
 // this is fine, they will merge together
-
-// use case - tells TS that `exampleProperty` exists
-interface Window {
-  exampleProperty: number;
-}
 ```
 
 Type vs interfaces
@@ -142,21 +150,30 @@ Type vs interfaces
 2. If you need to define a type to use with the implements heritage term, it’s best to use an interface
 3. If you need to allow consumers of your types to augment them, you must use an interface.
 
-Recursion types: self-referential, and are often used to describe infinitely nestable types
+[Recursion types](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-1.html#recursive-conditional-types): self-referential, and are often used to describe infinitely nestable types
 
 ```ts
 type NestedNumbers = number | NestedNumbers[];
-
 const val: NestedNumbers = [3, 4, [5, 6, [7], 59], 221];
-
-if (typeof val !== "number") {
-  val.push(41);
-}
 ```
 
-- void type: the return value of a void function is intended to be ignored
+<br/>
 
-function overloads - defining multiple function heads that serve as entry points to a single implementation
+### Functions
+
+- Both can describe [call signature](https://www.typescriptlang.org/docs/handbook/2/functions.html#call-signatures)
+
+```ts
+interface TwoNumberCalculation {
+  (x: number, y: number): number;
+}
+
+type TwoNumberCalc = (x: number, y: number) => number;
+```
+
+- [Construct signatures](https://www.typescriptlang.org/docs/handbook/2/functions.html#construct-signatures) are similar to call signatures, except they describe what should happen with the new keyword.
+- void type: the return value of a void function is intended to be ignored
+- function overloads - defining multiple function heads that serve as entry points to a single implementation
 
 ```ts
 // not good as HTMLFormElement and FormSubmitHandler should link, but this defines the entire cardinal set
@@ -165,7 +182,7 @@ function handleMainEvent(
   handler: FormSubmitHandler | MessageHandler
 ) {}
 
-// improved
+// improved, we state only this permutations are possible
 function handleMainEvent(elem: HTMLFormElement, handler: FormSubmitHandler);
 function handleMainEvent(elem: HTMLIFrameElement, handler: MessageHandler);
 function handleMainEvent(
@@ -174,14 +191,9 @@ function handleMainEvent(
 ) {
   // implementation...
 }
-
-handleMainEvent;
-// function handleMainEvent(elem: HTMLFormElement, handler: FormSubmitHandler): any (+1 overload)
-// looks like 3 function declarations but really just 2 heads exposed, the last head / body is inaccessible
-// note: the implementation must be general enough to include everything that possible through the explosed,
+// looks like 3 function declarations but really just 2 heads exposed, the last is inaccessible
+// note: the implementation must be general enough to include everything that possible through the exposed
 ```
-
-this type:
 
 ```ts
 function myClickHandler(event: Event) {
@@ -190,19 +202,57 @@ function myClickHandler(event: Event) {
 }
 myClickHandler(new Event("click")); // seems ok
 
-// Fix
+// Fix, "this" type
 function myClickHandler(this: HTMLButtonElement, event: Event) {
   this.disabled = true;
 }
 ```
 
-Function type best practices: Explicitly define return types
+- Function type best practices: Explicitly define return types
+- Ex. We’ll see some type-checking errors pop up, but at the invocation site, not the declaration site.
 
-[Classes (skipped)](https://www.typescript-training.com/course/fundamentals-v3/10-classes/)
+```ts
+async function getData(url: string) {
+  const resp = await fetch(url);
+  if (resp.ok) {
+    const data = (await resp.json()) as {
+      properties: string[];
+    };
+    return data;
+  }
+}
 
-- top type (symbol: ⊤) is a type that describes any possible value allowed by the system, i.e. any & unknown
-- Any differs from unknown in that values with an unknown type cannot be used without first applying a type guard
-- A bottom type (symbol: ⊥) is a type that describes no possible value allowed by the system. To use our set theory mental model, we could describe this as "any value from the following set: { } (intentionally empty)", i.e. never
+function loadData() {
+  getData("https://example.com").then((result) => {
+    console.log(result.properties.join(", ")); // ERROR Object is possibly 'undefined'.
+  });
+}
+// FIX
+async function getData(url: string): Promise<{ properties: string[] }> {
+  const resp = await fetch(url);
+  if (resp.ok) {
+    const data = (await resp.json()) as {
+      properties: string[];
+    };
+    return data;
+  }
+}
+```
+
+<br/>
+
+### [Classes (skipped)](https://www.typescript-training.com/course/fundamentals-v3/10-classes/)
+
+<br/>
+
+### Top and bottom types
+
+- Top type (symbol: ⊤) is a type that describes any possible value allowed by the system, i.e. any & unknown
+  - Any differs from unknown in that values with an unknown type cannot be used without first applying a type guard
+- A bottom type (symbol: ⊥) is a type that describes no possible value allowed by the system, i.e. never
+  - usage below
+
+// TODO https://frontendmasters.com/courses/typescript-v3/bottom-types-never/
 
 ```ts
 // @errors: 2322
@@ -210,30 +260,16 @@ function obtainRandomVehicle(): any {
   return {} as any;
 }
 /// ---cut---
-class Car {
-  drive() {
-    console.log("vroom");
-  }
-}
-class Truck {
-  tow() {
-    console.log("dragging something");
-  }
-}
-class Boat {
-  isFloating() {
-    return true;
-  }
-}
+class Car {}
+class Truck {}
+class Boat {}
 type Vehicle = Truck | Car | Boat;
 
 let myVehicle: Vehicle = obtainRandomVehicle();
 
 // The exhaustive conditional
 if (myVehicle instanceof Truck) {
-  myVehicle.tow(); // Truck
 } else if (myVehicle instanceof Car) {
-  myVehicle.drive(); // Car
 } else {
   // ERROR! Type 'Boat' is not assignable to type 'never'.
   const neverValue: never = myVehicle;
