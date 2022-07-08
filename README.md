@@ -1,8 +1,8 @@
 # typescript
 
-## [TypeScript Fundamentals v3](https://github.com/mike-north/ts-fundamentals-v3)
+# [TypeScript Fundamentals v3](https://github.com/mike-north/ts-fundamentals-v3)
 
-### Setup
+## Setup
 
 - [Setting up a TS compiler](https://www.typescript-training.com/course/fundamentals-v3/02-hello-typescript/)
 - .ts files contain info and runs
@@ -12,7 +12,7 @@
 
 <br/>
 
-### Variables and Values
+## Variables and Values
 
 - in TS, variables are born with their types
   - `const age = 6`, type is 'immutable value type'
@@ -22,13 +22,13 @@
 
 <br/>
 
-### Objects, Arrays and Tuples
+## Objects, Arrays and Tuples
 
 - object literal type may only specific known props, unstated types will cause an error
   - `const obj: { name: string } = { name: 'joe', age: 1};` -> error
 - `const obj: { [k: string]: string } = { name: 'joe'};` -> keys and values = string
 
-- Tuple: multi-element, ordered data structure, position of each item has special meaning
+- **Tuple**: multi-element, ordered data structure, position of each item has special meaning
 
 ```ts
 let myCar = [2002, "Toyota", "Corolla"];
@@ -46,10 +46,10 @@ numPair.push(6); // OK
 
 <br/>
 
-### Structural vs. Nominal Types
+## Structural vs. Nominal Types
 
 - Type-checking can be thought of as a task that attempts to evaluate the question of compatibility or type equivalence
-- Nominal type systems are about names
+- **Nominal type system**: are about names
 
 ```java
 // java
@@ -61,7 +61,7 @@ Car car = new Car();
 CarChecker.checkCar(car); // checks if car is instance of class named Car car
 ```
 
-- Structural type systems (which TS is) are about structure or shape
+- **Structural type system**: (which TS is) are about structure or shape
 
 ```ts
 class Car {
@@ -83,9 +83,9 @@ printCar({
 
 <br/>
 
-### Union and Intersection Types
+## Union and Intersection Types
 
-- type guards: expressions, which when used with control flow statement, allow us to have a more specific type for a particular value
+- **Type guards**: expressions, which when used with control flow statement, allow us to have a more specific type for a particular value
 
 ```ts
 const e: Error | string = '';
@@ -98,17 +98,17 @@ if( e instance of Error){ // <- type guard
 
 <br/>
 
-### Interfaces and Type Aliases
+## Interfaces and Type Aliases
 
 - 2 ways to define types, type alias & interfaces
 - type alias declaration is per scope
 
 ```ts
-// Intersection types:  combine existing types
+// Intersection types: combine existing types
 type SpecialDate = Date & { getReason(): string };
 ```
 
-interface: defines an object type, i.e. an instance of a class could look like this
+- **Interface**: defines an object type, i.e. an instance of a class could look like this
 
 ```ts
 // heritage clauses = extends, a subclass extends from a base class
@@ -144,13 +144,13 @@ interface AnimalLike {
 // this is fine, they will merge together
 ```
 
-Type vs interfaces
+### Type vs interfaces
 
 1. If you need to define something other than an object type (e.g., use of the | union type operator), you must use a type alias
 2. If you need to define a type to use with the implements heritage term, it’s best to use an interface
 3. If you need to allow consumers of your types to augment them, you must use an interface.
 
-[Recursion types](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-1.html#recursive-conditional-types): self-referential, and are often used to describe infinitely nestable types
+- [**Recursion types**](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-1.html#recursive-conditional-types): self-referential, and are often used to describe infinitely nestable types
 
 ```ts
 type NestedNumbers = number | NestedNumbers[];
@@ -159,9 +159,9 @@ const val: NestedNumbers = [3, 4, [5, 6, [7], 59], 221];
 
 <br/>
 
-### Functions
+## Functions
 
-- Both can describe [call signature](https://www.typescriptlang.org/docs/handbook/2/functions.html#call-signatures)
+- Both below describe [**call signatures**](https://www.typescriptlang.org/docs/handbook/2/functions.html#call-signatures)
 
 ```ts
 interface TwoNumberCalculation {
@@ -171,7 +171,7 @@ interface TwoNumberCalculation {
 type TwoNumberCalc = (x: number, y: number) => number;
 ```
 
-- [Construct signatures](https://www.typescriptlang.org/docs/handbook/2/functions.html#construct-signatures) are similar to call signatures, except they describe what should happen with the new keyword.
+- [**Construct signatures**](https://www.typescriptlang.org/docs/handbook/2/functions.html#construct-signatures) are similar to call signatures, except they describe what should happen with the new keyword.
 - void type: the return value of a void function is intended to be ignored
 - function overloads - defining multiple function heads that serve as entry points to a single implementation
 
@@ -241,18 +241,16 @@ async function getData(url: string): Promise<{ properties: string[] }> {
 
 <br/>
 
-### [Classes (skipped)](https://www.typescript-training.com/course/fundamentals-v3/10-classes/)
+## [Classes (skipped)](https://www.typescript-training.com/course/fundamentals-v3/10-classes/)
 
 <br/>
 
-### Top and bottom types
+## Top and bottom types
 
-- Top type (symbol: ⊤) is a type that describes any possible value allowed by the system, i.e. any & unknown
+- **Top type (symbol: ⊤)**: is a type that describes any possible value allowed by the system, i.e. `any` & `unknown`
   - Any differs from unknown in that values with an unknown type cannot be used without first applying a type guard
-- A bottom type (symbol: ⊥) is a type that describes no possible value allowed by the system, i.e. never
+- **Bottom type (symbol: ⊥)**: is a type that describes no possible value allowed by the system, i.e. `never`
   - usage below
-
-// TODO https://frontendmasters.com/courses/typescript-v3/bottom-types-never/
 
 ```ts
 // @errors: 2322
@@ -263,7 +261,7 @@ function obtainRandomVehicle(): any {
 class Car {}
 class Truck {}
 class Boat {}
-type Vehicle = Truck | Car | Boat;
+type Vehicle = Truck | Car | Boat; // if you add boat...
 
 let myVehicle: Vehicle = obtainRandomVehicle();
 
@@ -271,15 +269,32 @@ let myVehicle: Vehicle = obtainRandomVehicle();
 if (myVehicle instanceof Truck) {
 } else if (myVehicle instanceof Car) {
 } else {
-  // ERROR! Type 'Boat' is not assignable to type 'never'.
+  // You'll get helpful ERROR! Type 'Boat' is not assignable to type 'never'
+  // Signal a case in which if we are in this cond it myVehicle better be a never
+  // aka, you never expect to reach this code
   const neverValue: never = myVehicle;
+
+  // typically throw an error here
+  class UnreachableError extends Error {
+    constructor(_nvr: never, message: string) {
+      super(message);
+    }
+  }
+
+  throw new UnreachableError(
+    myVehicle,
+    `Unexpected vehicle type: ${myVehicle}`
+  );
 }
 ```
 
-Type guards
+<br/>
+
+## Type guards and narrowing
+
+### Built in type guards
 
 ```ts
-// Built in
 let value:
   | Date
   | null
@@ -290,81 +305,52 @@ let value:
 
 // instanceof
 if (value instanceof Date) {
-  value;
-  // ^?
 }
 // typeof
 else if (typeof value === "string") {
-  value;
-  // ^?
 }
 // Specific value check
 else if (value === null) {
-  value;
-  // ^?
 }
 // Truthy/falsy check
 else if (!value) {
-  value;
-  // ^?
 }
 // Some built-in functions
 else if (Array.isArray(value)) {
-  value;
-  // ^?
 }
 // Property presence check
 else if ("dateRange" in value) {
-  value;
-  // ^?
 } else {
-  value;
-  // ^?
+  // if top was exhaustive, value should be never here
 }
+```
 
-// user defined
+### User-defined type guards
+
+```ts
 interface CarLike {
   make: string;
-  model: string;
   year: number;
 }
 
 let maybeCar: unknown;
 
-// the guard
+// the guard, NOTE the return to now utilize CarLike narrowing
 function isCarLike(valueToTest: any): valueToTest is CarLike {
   return (
-    valueToTest &&
+    valueToTest && // is it nullish?
     typeof valueToTest === "object" &&
     "make" in valueToTest &&
     typeof valueToTest["make"] === "string" &&
-    "model" in valueToTest &&
-    typeof valueToTest["model"] === "string" &&
     "year" in valueToTest &&
     typeof valueToTest["year"] === "number"
   );
+  // NOTE, if you write a non-exhaustive guard... you'll get an error further down the line
 }
 
-// using the guard
-if (isCarLike(maybeCar)) {
-  maybeCar;
-  // ^?
-}
-
-// alternative - eliminates the if statement
+// Another usage - eliminates using this as an if statement
 function assertsIsCarLike(valueToTest: any): asserts valueToTest is CarLike {
-  if (
-    !(
-      valueToTest &&
-      typeof valueToTest === "object" &&
-      "make" in valueToTest &&
-      typeof valueToTest["make"] === "string" &&
-      "model" in valueToTest &&
-      typeof valueToTest["model"] === "string" &&
-      "year" in valueToTest &&
-      typeof valueToTest["year"] === "number"
-    )
-  )
+  if (!isCarLike(valueToTest))
     throw new Error(`Value does not appear to be a CarLike${valueToTest}`);
 }
 
@@ -372,12 +358,26 @@ assertsIsCarLike(maybeCar);
 maybeCar; // now known type is CarLike
 ```
 
+<br/>
+
+## Nullish values
+
+- **Non-null assertion operator**
+
 ```ts
 // !. tells ts to ignore possibility that value could null / undefined
 cart.fruits!.push({ name: "kumkuat", qty: 1 });
 ```
 
-- Generics: allow type parametrization and greater type reuse. Describe the minimum requirement for a type param
+- [**Definite assignment operator (skip)**](https://www.typescript-training.com/course/fundamentals-v3/13-nullish-values/#definite-assignment-operator)
+
+<br/>
+
+# TODO https://www.typescript-training.com/course/fundamentals-v3/14-generics/
+
+## Generics
+
+**Generics:** allow type parametrization and greater type reuse. Describe the minimum requirement for a type param
 
 ```ts
 interface HasId {
