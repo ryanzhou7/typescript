@@ -373,11 +373,9 @@ cart.fruits!.push({ name: "kumkuat", qty: 1 });
 
 <br/>
 
-# TODO https://www.typescript-training.com/course/fundamentals-v3/14-generics/
-
 ## Generics
 
-**Generics:** allow type parametrization and greater type reuse. Describe the minimum requirement for a type param
+**Generics:** function arguments, but for types. Describes the minimum requirement for a type param
 
 ```ts
 interface HasId {
@@ -390,17 +388,15 @@ function listToDict<T extends HasId>(list: T[]): Dict<T> {}
 // generic constraints
 ```
 
-- Best Practices: Use each type parameter at least twice. Any less and you might be casting with the as keyword
+- Best Practices, use each type parameter at least twice. Any less and you might be casting with the as keyword
 
 ```ts
 function returnAs<T>(arg: any): T {
-  return arg // 🚨 an `any` that will _seem_ like a `T`
-
-(parameter) arg: any
+  return arg; // 🚨 an `any` that will _seem_ like a `T`
 }
 
 // 🚨 DANGER! 🚨
-const first = returnAs<number>(window)
+const first = returnAs<number>(window);
 // const first: number
 // const sameAs = window as any as number
 ```
@@ -408,7 +404,7 @@ const first = returnAs<number>(window)
 <br/>
 <br/>
 
-[Making TypeScript Stick](https://www.typescript-training.com/course/making-typescript-stick)
+# [ Making TypeScript Stick](https://www.typescript-training.com/course/making-typescript-stick)
 
 ## 6 significant TS updates
 
